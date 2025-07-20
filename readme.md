@@ -132,14 +132,6 @@ src/
 
 ---
 
-## 🔒 Security Best Practices
-
-- **Remove or mask any real database passwords or sensitive credentials before uploading to GitHub.**
-- Use environment variables or configuration management for production secrets.
-- No sensitive data is stored in the repository.
-
----
-
 ## 🤝 Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
