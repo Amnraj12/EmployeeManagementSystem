@@ -1,0 +1,26 @@
+//// filepath: src/main/resources/templates/employee/tasks.html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+      <meta charset="UTF-8">
+      <title>My Tasks</title>
+      <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+      
+          <nav class="navbar">
+              <a href="/employee/dashboard" class="nav-link">Dashboard</a>
+              <a href="/employee/tasks" class="nav-link">My Tasks</a>
+              <a href="/logout" class="nav-link">Logout</a>
+          </nav>
+          <h1>My Tasks</h1>
+      
+      <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+      <main>
+          <p>List and status of your tasks will be displayed here.</p>
+      </main>
+      <footer>
+          <p>&copy; 2025 Your Company Name</p>
+      </footer>
+  </body>
+</html>

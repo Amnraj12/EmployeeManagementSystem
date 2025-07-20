@@ -1,0 +1,31 @@
+//// filepath: src/main/resources/templates/fragments/employeeHeader.html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+      <meta http-equiv="Pragma" content="no-cache" />
+      <meta http-equiv="Expires" content="0" />
+      <title>Employee Panel</title>
+      <link rel="stylesheet" href="/css/styles.css">
+      <script>
+          window.onpageshow = function(event) {
+              if (event.persisted) {
+                  window.location.reload();
+              }
+          };
+      </script>
+  </head>
+  <body>
+      <div th:fragment="employeeNavbar">
+        <nav class="navbar">
+          <a href="/employee/dashboard" class="nav-link">Dashboard</a>
+          <a href="/employee/tasks/available" class="nav-link">Available Tasks</a>
+          <a href="/employee/tasks/my" class="nav-link">My Tasks</a>
+          <a href="/employee/profile" class="nav-link">Profile</a>
+          <a href="/employee/leaves" class="nav-link">Leave Requests</a>
+          <a href="/logout" class="nav-link">Logout</a>
+        </nav>
+      </div>
+  </body>
+</html>

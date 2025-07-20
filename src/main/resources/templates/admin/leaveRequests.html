@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Requests</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      /* Page header */
+      h2 {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+      
+      /* Table container */
+      .table-container {
+        overflow-x: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+      }
+      
+      /* Table styling */
+      .task-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        white-space: nowrap;
+      }
+      
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      .task-table tr:last-child td {
+        border-bottom: none;
+      }
+      
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      /* Status styles */
+      .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      
+      .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      
+      .status-approved {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      
+      .status-rejected {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      
+      /* Action buttons */
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-right: 0.5rem;
+        white-space: nowrap; /* Prevent button text wrapping */
+        min-width: 80px; /* Ensure minimum width */
+      }
+      
+      /* Approve button - explicitly target the first form's button */
+      form:first-of-type button {
+        background-color: #28a745;
+        color: white;
+      }
+      
+      form:first-of-type button:hover {
+        background-color: #218838;
+      }
+      
+      /* Deny button - explicitly target the second form's button */
+      form:last-of-type button {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      form:last-of-type button:hover {
+        background-color: #c82333;
+      }
+      
+      /* Truncate long texts */
+      .reason-cell {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      /* Added for action cell */
+      .action-cell {
+        white-space: nowrap; /* Keep buttons on same line */
+        min-width: 180px; /* Ensure enough space for both buttons */
+      }
+      
+      /* Responsive fix */
+      @media (max-width: 768px) {
+        button {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <main>
+      <h2>All Leave Requests</h2>
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Employee</th>
+              <th>From Date</th>
+              <th>To Date</th>
+              <th>Days</th>
+              <th>Category</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="req : ${requests}">
+              <td th:text="${req.id}"></td>
+              <td th:text="${req.employee.name}"></td>
+              <td th:text="${#temporals.format(req.startDate, 'MMM dd, yyyy')}"></td>
+              <td th:text="${#temporals.format(req.endDate, 'MMM dd, yyyy')}"></td>
+              <td th:text="${req.numberOfDays}"></td>
+              <td th:text="${req.category}"></td>
+              <td class="reason-cell" th:text="${req.reason ?: '-'}"></td>
+              <td>
+                <span th:class="${'status-badge status-' + #strings.toLowerCase(req.status)}" 
+                      th:text="${req.status}"></span>
+              </td>
+              <td class="action-cell">
+                <form th:action="@{'/admin/leaves/approve/' + ${req.id}}" method="post" style="display:inline;">
+                  <button type="submit">Approve</button>
+                </form>
+                <form th:action="@{'/admin/leaves/deny/' + ${req.id}}" method="post" style="display:inline;">
+                  <button type="submit">Deny</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

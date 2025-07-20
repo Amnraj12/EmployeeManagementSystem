@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+     x   display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .task-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+      
+      .task-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+      }
+      
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      .task-table tr:last-child td {
+        border-bottom: none;
+      }
+      
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      
+      .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      
+      .status-accepted {
+        background-color: #e3f2fd;
+        color: #1565c0;
+      }
+      
+      .status-completed {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
+      
+      .status-reviewed {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+      }
+      
+      
+      progress {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+      }
+      
+      progress::-webkit-progress-bar {
+        background-color: #e9ecef;
+        border-radius: 4px;
+      }
+      
+      progress::-webkit-progress-value {
+        background-color: #3498db;
+        border-radius: 4px;
+      }
+      
+      .progress-container {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+      
+      .progress-value {
+        display: block;
+        text-align: right;
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+      }
+      
+      
+      .task-form {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .task-input {
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+      
+      .task-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      
+      .task-button:hover {
+        background-color: #2980b9;
+      }
+      
+      .complete-button {
+        background-color: #27ae60;
+      }
+      
+      .complete-button:hover {
+        background-color: #2ecc71;
+      }
+      
+      
+      .comment-text {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .no-comment {
+        color: #adb5bd;
+        font-style: italic;
+      }
+      
+      
+      @media (max-width: 1200px) {
+        .task-table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+    <main>
+      <div class="page-header">
+        <h2>My Tasks</h2>
+        <div class="task-count" th:if="${tasks != null}">
+          <span th:text="${tasks.size()} + ' task(s)'"></span>
+        </div>
+      </div>
+      
+      <div class="task-card">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Task Number</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th>Employee Comment</th>
+              <th>Admin Comment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="task : ${tasks}">
+              <td th:text="${task.id}"></td>
+              <td th:text="${task.taskNumber}"></td>
+              <td th:text="${task.taskName}"></td>
+              <td th:text="${task.description}"></td>
+              <td>
+                <span th:class="'status-badge status-' + ${#strings.toLowerCase(task.status)}" 
+                      th:text="${task.status}"></span>
+              </td>
+              <td>
+                <div class="progress-container">
+                  <progress max="100" th:value="${task.progress}"></progress>
+                  <span class="progress-value" th:text="${task.progress + '%'}"></span>
+                </div>
+                
+                
+                <form th:if="${task.status}=='Accepted'"
+                      th:action="@{/employee/tasks/progress/{id}(id=${task.id})}"
+                      method="post" class="task-form">
+                  <input type="number" name="progress" min="0" max="100" placeholder="0-100" required class="task-input"/>
+                  <button type="submit" class="task-button">Update</button>
+                </form>
+              </td>
+              <td>
+                <div class="comment-text" th:text="${task.employeeComment ?: 'No comment'}"></div>
+              </td>
+              <td>
+                <div class="comment-text" th:text="${task.adminComment ?: 'No admin comment'}" 
+                     th:class="${task.adminComment == null ? 'no-comment comment-text' : 'comment-text'}"></div>
+              </td>
+              <td>
+                
+                <form th:if="${task.status}=='Accepted'"
+                      th:action="@{'/employee/tasks/finish/' + ${task.id}}"
+                      method="post" style="margin-bottom: 0.5rem;">
+                  <button type="submit" class="task-button complete-button">Complete</button>
+                </form>
+                <form th:if="${task.status}=='Accepted'"
+                      th:action="@{'/employee/tasks/comment/' + ${task.id}}"
+                      method="post" class="task-form">
+                  <input type="text" name="employeeComment" placeholder="Add comment" required class="task-input"/>
+                  <button type="submit" class="task-button">Submit</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Leave</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+      
+      .page-header h2 {
+        margin: 0;
+      }
+      
+      .form-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+      
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+      
+      .form-row {
+        display: flex;
+        gap: 1rem;
+      }
+      
+      .form-row .form-group {
+        flex: 1;
+      }
+      
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      
+      .submit-button {
+        background-color: #27ae60;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        width: 100%;
+      }
+      
+      .submit-button:hover {
+        background-color: #2ecc71;
+        transform: translateY(-2px);
+      }
+      
+      .back-link {
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+        color: #3498db;
+        text-decoration: none;
+      }
+      
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      
+      @media (max-width: 768px) {
+        .form-row {
+          flex-direction: column;
+          gap: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+    <main>
+      <div class="page-header">
+        <h2>Apply for Leave</h2>
+      </div>
+      
+      <div class="form-container">
+        <form
+          th:action="@{/employee/leaves/apply}"
+          th:object="${leaveRequest}"
+          method="post"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">From Date:</label>
+              <input type="date" id="startDate" th:field="*{startDate}" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="endDate">To Date:</label>
+              <input type="date" id="endDate" th:field="*{endDate}" required />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" th:field="*{category}" required>
+              <option value="Medical">Medical</option>
+              <option value="Casual">Casual</option>
+              <option value="Official">Official</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="reason">Reason:</label>
+            <textarea
+              id="reason"
+              th:field="*{reason}"
+              placeholder="Please provide any details about your leave request (optional)"
+            ></textarea>
+          </div>
+          
+          <button type="submit" class="submit-button">Submit Leave Request</button>
+        </form>
+        
+        <a href="/employee/leaves" class="back-link">← Back to Leave Requests</a>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

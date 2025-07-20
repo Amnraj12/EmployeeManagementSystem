@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      
+      .stats-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      
+      .stats-card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+        border-bottom: 2px solid #f4f4f4;
+        padding-bottom: 0.5rem;
+      }
+      
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #3498db;
+        margin: 1rem 0;
+      }
+      
+      .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+      
+      .task-status {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      
+      .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+      }
+      
+      .status-accepted { background-color: #3498db; }
+      .status-completed { background-color: #2ecc71; }
+      .status-reviewed { background-color: #27ae60; }
+      
+      .recent-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .recent-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f4f4f4;
+      }
+      
+      .recent-list li:last-child {
+        border-bottom: none;
+      }
+      
+      .welcome-banner {
+        background-color: #2c3e50;
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      .welcome-banner h1 {
+        margin-top: 0;
+      }
+      
+      .welcome-banner p {
+        opacity: 0.8;
+      }
+      
+      @media (max-width: 768px) {
+        .dashboard-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+    
+    <main>
+      <div class="welcome-banner">
+        <h1>Welcome, <span th:text="${employee.name}">Employee</span>!</h1>
+        <p>Here's an overview of your tasks and activities.</p>
+      </div>
+      
+      <div class="dashboard-container">
+        <!-- Task Statistics Card -->
+        <div class="stats-card">
+          <h3>Task Statistics</h3>
+          <div>
+            <div class="stat-value" th:text="${totalTasksCount}">0</div>
+            <div class="stat-label">Total Tasks</div>
+          </div>
+          
+          <div>
+            <div class="task-status" th:if="${taskStatusCount.containsKey('Accepted')}">
+              <div class="status-indicator status-accepted"></div>
+              <span th:text="'In Progress: ' + ${taskStatusCount.get('Accepted')}">In Progress: 0</span>
+            </div>
+            <div class="task-status" th:if="${taskStatusCount.containsKey('Completed')}">
+              <div class="status-indicator status-completed"></div>
+              <span th:text="'Completed: ' + ${taskStatusCount.get('Completed')}">Completed: 0</span>
+            </div>
+            <div class="task-status" th:if="${taskStatusCount.containsKey('Reviewed')}">
+              <div class="status-indicator status-reviewed"></div>
+              <span th:text="'Reviewed: ' + ${taskStatusCount.get('Reviewed')}">Reviewed: 0</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Points Card -->
+        <div class="stats-card">
+          <h3>Performance Points</h3>
+          <div>
+            <div class="stat-value" th:text="${totalPoints}">0</div>
+            <div class="stat-label">Total Points Earned</div>
+          </div>
+          <div>
+            <div class="stat-value" th:text="${priorityTasksCompleted}">0</div>
+            <div class="stat-label">High Priority Tasks Completed</div>
+          </div>
+        </div>
+        
+        <!-- Recent Tasks Card -->
+        <div class="stats-card">
+          <h3>Recent Tasks</h3>
+          <ul class="recent-list" th:if="${!recentTasks.empty}">
+            <li th:each="task : ${recentTasks}">
+              <div th:text="${task.taskName}">Task Name</div>
+              <div>
+                <small th:text="'Status: ' + ${task.status}">Status</small>
+                <small th:if="${task.progress > 0}" th:text="' | Progress: ' + ${task.progress} + '%'">Progress</small>
+              </div>
+            </li>
+          </ul>
+          <p th:if="${recentTasks.empty}">No recent tasks found.</p>
+          <a href="/employee/tasks/my" style="margin-top: auto; text-align: right;">View all tasks →</a>
+        </div>
+        
+        <!-- Leave Requests Card -->
+        <div class="stats-card">
+          <h3>Leave Requests</h3>
+          <ul class="recent-list" th:if="${!recentLeaveRequests.empty}">
+            <li th:each="leave : ${recentLeaveRequests}">
+              <div th:text="${#temporals.format(leave.startDate, 'dd MMM')} + ' to ' + ${#temporals.format(leave.endDate, 'dd MMM')}">Leave Period</div>
+              <div>
+                <small th:text="'Status: ' + ${leave.status}">Status</small>
+              </div>
+            </li>
+          </ul>
+          <p th:if="${recentLeaveRequests.empty}">No recent leave requests.</p>
+          <a href="/employee/leaves" style="margin-top: auto; text-align: right;">Manage leaves →</a>
+        </div>
+      </div>
+      
+      <!-- Quick Action Links -->
+      <div class="stats-card">
+        <h3>Quick Actions</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+          <a href="/employee/tasks/available" class="sort-button">Browse Available Tasks</a>
+          <a href="/employee/tasks/my" class="sort-button">View My Tasks</a>
+          <a href="/employee/profile" class="sort-button">Update Profile</a>
+          <a href="/employee/leaves/apply" class="sort-button">Apply for Leave</a>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

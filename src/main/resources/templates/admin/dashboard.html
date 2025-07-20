@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .dashboard-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+
+      .dashboard-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+
+      /* Stats Cards Container */
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-card .icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-card .value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-card .label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+
+      .stat-card.employees .icon {
+        color: #3498db;
+      }
+      .stat-card.tasks .icon {
+        color: #2ecc71;
+      }
+      .stat-card.pending .icon {
+        color: #f39c12;
+      }
+      .stat-card.leaves .icon {
+        color: #9b59b6;
+      }
+
+      /* Activity feed and card */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .card-header {
+        background-color: #f8f9fa;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .activity-feed {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .activity-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-time {
+        color: #95a5a6;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+      }
+
+      .empty-message {
+        padding: 1.5rem;
+        text-align: center;
+        color: #7f8c8d;
+      }
+
+      /* Sort controls */
+      .sort-options {
+        margin: 1.5rem 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .sort-label {
+        font-weight: 500;
+        color: #2c3e50;
+      }
+
+      .sort-button {
+        padding: 0.5rem 1.2rem;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #495057;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .sort-button:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+      }
+
+      .sort-button.active {
+        background-color: #2c3e50;
+        color: #fff;
+        border-color: #2c3e50;
+      }
+
+      /* No data message */
+      .no-data {
+        text-align: center;
+        padding: 2.5rem 2rem;
+        color: #6c757d;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .no-data h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+      }
+
+      .no-data ul {
+        display: inline-block;
+        text-align: left;
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+
+      .no-data li {
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
+
+      /* TABLE FIXES - Updated table styling */
+      .table-container {
+        overflow-x: auto; /* Enable horizontal scrolling if needed */
+        margin-bottom: 1rem;
+      }
+
+      .task-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed; /* Use fixed layout for better column control */
+      }
+
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        text-align: left;
+        padding: 1rem;
+        font-weight: 600;
+        border-bottom: 2px solid #e9ecef;
+      }
+
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        color: #495057;
+        vertical-align: middle; /* Center content vertically */
+      }
+
+      .task-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      /* Rank styling */
+      .rank-column {
+        font-weight: 600;
+        width: 60px; /* Narrower rank column */
+      }
+
+      /* Employee name column */
+      .name-column {
+        width: 38%; /* Give more space to names */
+      }
+
+      /* UPDATED: Employee name styling for better display */
+      .employee-name {
+        font-weight: 500;
+        font-size: 0.9rem; /* Reduced font size */
+        line-height: 1.2; /* Tighter line height */
+        word-break: break-word; /* Allow breaking words */
+        max-width: 95%; /* Prevent text from overflowing cell */
+      }
+
+      /* Stats columns */
+      .stats-column {
+        text-align: center;
+        width: 90px; /* Make stat columns more compact */
+        font-size: 0.9rem; /* Smaller font for stats */
+      }
+
+      /* Column headers also smaller */
+      .task-table th.stats-column {
+        font-size: 0.9rem;
+      }
+
+      .rank-1,
+      .rank-2,
+      .rank-3 {
+        font-weight: 700;
+      }
+
+      .rank-1 {
+        color: #f1c40f; /* Gold */
+      }
+
+      .rank-2 {
+        color: #bdc3c7; /* Silver */
+      }
+
+      .rank-3 {
+        color: #cd7f32; /* Bronze */
+      }
+
+      @media (max-width: 992px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .sort-options {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .stats-container {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <main>
+      <div class="dashboard-header">
+        <h2>Admin Dashboard</h2>
+      </div>
+
+      <div class="stats-container">
+        <div class="stat-card employees">
+          <div class="icon">👨‍💼</div>
+          <div class="value" th:text="${employeeCount ?: 0}">0</div>
+          <div class="label">Total Employees</div>
+        </div>
+
+        <div class="stat-card tasks">
+          <div class="icon">📋</div>
+          <div class="value" th:text="${taskCount ?: 0}">0</div>
+          <div class="label">Active Tasks</div>
+        </div>
+
+        <div class="stat-card pending">
+          <div class="icon">⏳</div>
+          <div class="value" th:text="${pendingCount ?: 0}">0</div>
+          <div class="label">Pending Approvals</div>
+        </div>
+
+        <div class="stat-card leaves">
+          <div class="icon">🗓️</div>
+          <div class="value" th:text="${leaveCount ?: 0}">0</div>
+          <div class="label">Leave Requests</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div>
+          <h3>Employee Performance Rankings</h3>
+
+          <div class="sort-options">
+            <span class="sort-label">Sort by: </span>
+            <a
+              th:href="@{/admin/dashboard(sortBy='points')}"
+              th:class="${currentSort == 'points' ? 'sort-button active' : 'sort-button'}"
+            >
+              Total Points
+            </a>
+            <a
+              th:href="@{/admin/dashboard(sortBy='priority')}"
+              th:class="${currentSort == 'priority' ? 'sort-button active' : 'sort-button'}"
+            >
+              Priority Tasks
+            </a>
+            <a
+              th:href="@{/admin/dashboard(sortBy='hours')}"
+              th:class="${currentSort == 'hours' ? 'sort-button active' : 'sort-button'}"
+            >
+              Hours Spent
+            </a>
+          </div>
+
+          <div class="no-data" th:if="${!hasRankings}">
+            <h3>No Rankings Available</h3>
+            <p>No employee rankings found. This could be because:</p>
+            <ul>
+              <li>No tasks have been marked as "Reviewed" yet</li>
+              <li>No points have been assigned to completed tasks</li>
+            </ul>
+            <p>
+              Please review some tasks or check task status to populate
+              rankings.
+            </p>
+          </div>
+
+          <div class="card" th:if="${hasRankings}">
+            <div class="table-container">
+              <table class="task-table">
+                <thead>
+                  <tr>
+                    <th class="rank-column">Rank</th>
+                    <th class="name-column">Employee Name</th>
+                    <th class="stats-column">Points</th>
+                    <th class="stats-column">Priority</th>
+                    <th class="stats-column">Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="ranking, stat : ${rankings}">
+                    <td class="rank-column">
+                      <span
+                        th:text="${stat.count}"
+                        th:class="${stat.count <= 3 ? 'rank-' + stat.count : ''}"
+                        >1</span
+                      >
+                    </td>
+                    <td class="name-column">
+                      <div
+                        class="employee-name"
+                        th:text="${ranking.employee.name}"
+                        th:title="${ranking.employee.name}"
+                      >
+                        Employee Name
+                      </div>
+                    </td>
+                    <td class="stats-column" th:text="${ranking.totalPoints}">
+                      0
+                    </td>
+                    <td class="stats-column" th:text="${ranking.priorityCount}">
+                      0
+                    </td>
+                    <td class="stats-column" th:text="${ranking.hoursSpent}">
+                      0
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Recent Activity</div>
+          <ul
+            class="activity-feed"
+            th:if="${recentActivities != null && !recentActivities.empty}"
+          >
+            <li class="activity-item" th:each="activity : ${recentActivities}">
+              <div th:text="${activity.description}">Activity description</div>
+              <div
+                class="activity-time"
+                th:text="${#temporals.format(activity.timestamp, 'MMM dd, yyyy HH:mm')}"
+              >
+                Time
+              </div>
+            </li>
+          </ul>
+          <div
+            class="empty-message"
+            th:if="${recentActivities == null || recentActivities.empty}"
+          >
+            No recent activities to display
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

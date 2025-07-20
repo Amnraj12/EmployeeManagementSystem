@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>Assigned Tasks</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      /* Header styling */
+      h2 {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+      
+      /* Table styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+      }
+      
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      tr:last-child td {
+        border-bottom: none;
+      }
+      
+      tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      /* Progress bar styling */
+      progress {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+      }
+      
+      /* Form styling */
+      input[type="text"] {
+        padding: 0.6rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+        width: 70%;
+      }
+      
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #2980b9;
+      }
+      
+      /* Add scrolling for table if needed */
+      .table-wrapper {
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <div th:replace="fragments/adminTaskNav :: taskNav"></div>
+    <main>
+      <h2>Assigned Tasks</h2>
+      
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Task Number</th>
+              <th>Name</th>
+              <th>Employee</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th>Employee Comment</th>
+              <th>Admin Comment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="task : ${tasks}" th:if="${task.assignedEmployee} != null">
+              <td th:text="${task.id}"></td>
+              <td th:text="${task.taskNumber}"></td>
+              <td th:text="${task.taskName}"></td>
+              <td th:text="${task.assignedEmployee.name}"></td>
+              <td th:text="${task.status}"></td>
+              <td>
+                <progress max="100" th:value="${task.progress}"></progress>
+                <span th:text="${task.progress + '%'}"></span>
+              </td>
+              <td th:text="${task.employeeComment}">No Comment</td>
+              <td th:text="${task.adminComment}">No Admin Comment</td>
+              <td>
+                <form th:action="@{/admin/tasks/comment}" method="post">
+                  <input type="hidden" name="taskId" th:value="${task.id}" />
+                  <input type="text" name="comment" placeholder="Add admin comment" required/>
+                  <button type="submit">Add</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

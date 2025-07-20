@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Employee Approvals</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      /* Page header */
+      h2 {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+      
+      /* Table container */
+      .table-container {
+        overflow-x: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+      }
+      
+      /* Table styling */
+      .task-table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        white-space: nowrap;
+      }
+      
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      .task-table tr:last-child td {
+        border-bottom: none;
+      }
+      
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      /* Action buttons */
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-right: 0.5rem;
+        white-space: nowrap; /* Prevent button text wrapping */
+        min-width: 80px; /* Ensure minimum width */
+      }
+      
+      /* Approve button - first form's button */
+      form:first-of-type button {
+        background-color: #28a745;
+        color: white;
+      }
+      
+      form:first-of-type button:hover {
+        background-color: #218838;
+      }
+      
+      /* Reject button - second form's button */
+      form:last-of-type button {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      form:last-of-type button:hover {
+        background-color: #c82333;
+      }
+      
+      /* Empty state for no pending employees */
+      .no-results {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+      }
+      
+      /* Action cell to prevent wrapping */
+      td:last-child {
+        white-space: nowrap;
+        min-width: 180px;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <main>
+      <h2>Pending Employee Approvals</h2>
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="employee : ${pendingEmployees}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.name}"></td>
+            <td th:text="${employee.email}"></td>
+            <td>
+              <form th:action="@{/admin/employees/approve/{id}(id=${employee.id})}" method="post" style="display:inline;">
+                <button type="submit">Approve</button>
+              </form>
+              <form th:action="@{/admin/employees/reject/{id}(id=${employee.id})}" method="post" style="display:inline;">
+                <button type="submit">Reject</button>
+              </form>
+            </td>
+          </tr>
+          <tr th:if="${pendingEmployees.empty}">
+            <td colspan="4" class="no-results">No pending employees found</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

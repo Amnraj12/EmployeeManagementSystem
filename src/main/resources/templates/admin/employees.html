@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Employees</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      /* Page header */
+      h2 {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+      
+      /* Table container */
+      .table-container {
+        overflow-x: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+      }
+      
+      /* Table styling */
+      .task-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        position: sticky;
+        top: 0;
+      }
+      
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      /* Action buttons */
+      .action-link {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+      }
+      
+      .action-link:hover {
+        background-color: #2980b9;
+      }
+      
+      /* Delete button specific */
+      form .action-link {
+        background-color: #e74c3c;
+      }
+      
+      form .action-link:hover {
+        background-color: #c0392b;
+      }
+      
+      /* Expand button specific */
+      .action-link.expand {
+        background-color: #2c3e50;
+      }
+      
+      .action-link.expand:hover {
+        background-color: #34495e;
+      }
+      
+      /* Expanded details */
+      .expanded-content {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+      }
+      
+      .expanded-content p {
+        margin: 0.5rem 0;
+        display: flex;
+      }
+      
+      .expanded-content strong {
+        min-width: 150px;
+        color: #2c3e50;
+      }
+      
+      /* Approval status */
+      .status-badge {
+        display: inline-block;
+        padding: 0.3rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+      }
+      
+      .status-yes {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      
+      .status-no {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+    <script>
+      function toggleExpand(id) {
+        var row = document.getElementById("expand-row-" + id);
+        if (row.style.display === "none" || row.style.display === "") {
+          row.style.display = "table-row";
+        } else {
+          row.style.display = "none";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <main>
+      <h2>Manage Employees</h2>
+      <div class="table-container">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>Unique ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Qualification</th>
+              <th>Approved</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <th:block th:each="employee : ${employees}">
+              <!-- Main Employee Row -->
+              <tr>
+                <td th:text="${employee.id}"></td>
+                <td th:text="${employee.name}"></td>
+                <td th:text="${employee.email}"></td>
+                <td th:text="${employee.phone ?: 'N/A'}"></td>
+                <td th:text="${employee.address ?: 'N/A'}"></td>
+                <td th:text="${employee.qualification ?: 'N/A'}"></td>
+                <td>
+                  <span th:class="${employee.approved} ? 'status-badge status-yes' : 'status-badge status-no'"
+                        th:text="${employee.approved} ? 'Yes' : 'No'"></span>
+                </td>
+                <td>
+                  <form th:action="@{/admin/employees/delete/{id}(id=${employee.id})}" method="post" style="display:inline;">
+                    <input type="hidden" th:if="${_csrf != null}" 
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="action-link">Delete</button>
+                  </form>
+                  <button type="button" class="action-link expand" th:onclick="|toggleExpand(${employee.id})|">
+                    Expand
+                  </button>
+                </td>
+              </tr>
+              <!-- Expand Row for Additional Details -->
+              <tr th:id="'expand-row-' + ${employee.id}" style="display:none;">
+                <td colspan="8">
+                  <div class="expanded-content">
+                    <p>
+                      <strong>Additional Email:</strong>
+                      <span th:text="${employee.additionalEmail ?: 'N/A'}"></span>
+                    </p>
+                    <p>
+                      <strong>Additional Phone:</strong>
+                      <span th:text="${employee.additionalPhone ?: 'N/A'}"></span>
+                    </p>
+                    <p>
+                      <strong>Gender:</strong>
+                      <span th:text="${employee.gender ?: 'N/A'}"></span>
+                    </p>
+                    <p>
+                      <strong>Marital Status:</strong>
+                      <span th:text="${employee.maritalStatus ?: 'N/A'}"></span>
+                    </p>
+                    <p>
+                      <strong>Blood Group:</strong>
+                      <span th:text="${employee.bloodGroup ?: 'N/A'}"></span>
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+      }
+      
+      .page-header h2 {
+        margin: 0;
+      }
+      
+      .task-form-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+      }
+      
+      .add-task-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .form-group label {
+        color: #2c3e50;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+      
+      .form-group textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+      
+      .form-row {
+        display: flex;
+        gap: 1.5rem;
+      }
+      
+      .form-row .form-group {
+        flex: 1;
+      }
+      
+      .submit-button {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        margin-top: 1rem;
+      }
+      
+      .submit-button:hover {
+        background-color: #34495e;
+        transform: translateY(-2px);
+      }
+      
+      @media (max-width: 768px) {
+        .form-row {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <div th:replace="fragments/adminTaskNav :: taskNav"></div>
+    <main>
+      <div class="page-header">
+        <h2>Add New Task</h2>
+      </div>
+      
+      <div class="task-form-container">
+        <form class="add-task-form" th:action="@{/admin/tasks/save}" th:object="${task}" method="post">
+          <div class="form-group">
+            <label for="taskName">Task Name:</label>
+            <input type="text" id="taskName" th:field="*{taskName}" required placeholder="Enter a descriptive task name" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}" required placeholder="Provide detailed task requirements and expectations"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="priority">Priority:</label>
+              <select id="priority" th:field="*{priority}" required>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="points">Points:</label>
+              <input type="number" id="points" th:field="*{points}" required min="1" placeholder="Performance points" />
+            </div>
+
+            <div class="form-group">
+              <label for="hoursAllocated">Hours Allocated:</label>
+              <input type="number" id="hoursAllocated" th:field="*{hoursAllocated}" required min="1" placeholder="Estimated hours" />
+            </div>
+          </div>
+
+          <button type="submit" class="submit-button">Save Task</button>
+        </form>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

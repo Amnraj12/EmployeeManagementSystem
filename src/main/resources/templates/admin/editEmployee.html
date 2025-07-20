@@ -1,0 +1,46 @@
+//// filepath: src/main/resources/templates/admin/editEmployee.html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Edit Employee</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <header th:replace="fragments/adminHeader :: adminNavbar"></header>
+    <main>
+      <h2>Edit Employee</h2>
+      <form
+        th:action="@{/admin/employees/update}"
+        th:object="${employee}"
+        method="post"
+      >
+        <input type="hidden" th:field="*{id}" />
+        <div>
+          <label for="name">Name:</label>
+          <input id="name" type="text" th:field="*{name}" required />
+        </div>
+        <div>
+          <label for="email">Email:</label>
+          <input id="email" type="email" th:field="*{email}" readonly />
+        </div>
+        <div>
+          <label for="phone">Phone:</label>
+          <input id="phone" type="text" th:field="*{phone}" required />
+        </div>
+        <div>
+          <label for="address">Address:</label>
+          <input id="address" type="text" th:field="*{address}" required />
+        </div>
+        <div>
+          <label for="qualification">Qualification:</label>
+          <input id="qualification" type="text" th:field="*{qualification}" />
+        </div>
+        <button type="submit">Update Employee</button>
+      </form>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

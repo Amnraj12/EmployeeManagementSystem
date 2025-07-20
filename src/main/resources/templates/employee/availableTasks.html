@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Tasks</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .page-header h2 {
+        margin: 0;
+      }
+      
+      .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #dc3545;
+      }
+      
+      .task-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+      
+      .task-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+      
+      .task-table th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        white-space: nowrap;
+      }
+      
+      .task-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+      }
+      
+      .task-table tr:last-child td {
+        border-bottom: none;
+      }
+      
+      .task-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      /* Column widths */
+      .id-col { min-width: 60px; }
+      .task-num-col { min-width: 120px; }
+      .name-col { min-width: 150px; }
+      .desc-col { min-width: 200px; max-width: 300px; }
+      .priority-col { min-width: 100px; }
+      .points-col { min-width: 80px; }
+      .hours-col { min-width: 80px; }
+      .status-col { min-width: 100px; }
+      .action-col { min-width: 120px; }
+      
+      /* Description text truncation */
+      .desc-text {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      /* Priority styling */
+      .priority-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      
+      .priority-high {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+      
+      .priority-medium {
+        background-color: #fff8e1;
+        color: #f57f17;
+      }
+      
+      .priority-low {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
+      
+      /* Status badge */
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background-color: #e3f2fd;
+        color: #1565c0;
+      }
+      
+      /* Accept button styling */
+      .accept-button {
+        background-color: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        white-space: nowrap;
+      }
+      
+      .accept-button:hover {
+        background-color: #2ecc71;
+        transform: translateY(-2px);
+      }
+      
+      /* No tasks message */
+      .no-tasks {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+      }
+      
+      @media (max-width: 1200px) {
+        .task-table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+    <main>
+      <div class="page-header">
+        <h2>Available Tasks</h2>
+        <div class="task-count" th:if="${tasks != null}">
+          <span th:text="${tasks.size()} + ' tasks available'"></span>
+        </div>
+      </div>
+      
+      <!-- Flash error message if employee is already enrolled in a task -->
+      <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+      </div>
+      
+      <div class="task-card">
+        <div style="overflow-x: auto;">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th class="id-col">ID</th>
+                <th class="task-num-col">Task Number</th>
+                <th class="name-col">Name</th>
+                <th class="desc-col">Description</th>
+                <th class="priority-col">Priority</th>
+                <th class="points-col">Points</th>
+                <th class="hours-col">Hours</th>
+                <th class="status-col">Status</th>
+                <th class="action-col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="task : ${tasks}" th:if="${task.status}=='Available'">
+                <td th:text="${task.id}"></td>
+                <td th:text="${task.taskNumber}"></td>
+                <td th:text="${task.taskName}"></td>
+                <td>
+                  <div class="desc-text" th:text="${task.description}"></div>
+                </td>
+                <td>
+                  <span th:class="'priority-badge priority-' + ${#strings.toLowerCase(task.priority)}" 
+                        th:text="${task.priority}"></span>
+                </td>
+                <td th:text="${task.points}"></td>
+                <td th:text="${task.hoursAllocated}"></td>
+                <td>
+                  <span class="status-badge" th:text="${task.status}"></span>
+                </td>
+                <td>
+                  <form th:action="@{'/employee/tasks/accept/' + ${task.id}}" method="post">
+                    <button type="submit" class="accept-button">Accept Task</button>
+                  </form>
+                </td>
+              </tr>
+              <!-- No tasks message -->
+              <tr th:if="${tasks.isEmpty()}">
+                <td colspan="9">
+                  <div class="no-tasks">
+                    <p>No available tasks found at this time. Please check back later.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>

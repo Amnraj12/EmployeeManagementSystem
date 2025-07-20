@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <style>
+      /* Sub-navbar styling */
+      .sub-navbar {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
+      }
+      
+      .sub-nav-link {
+        color: #2c3e50;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      
+      .sub-nav-link:hover {
+        background-color: #e9ecef;
+        color: #1a252f;
+      }
+      
+      .sub-nav-link.active {
+        background-color: #3498db;
+        color: white;
+      }
+      
+      /* Add a simple script to highlight the active link */
+      @media (max-width: 600px) {
+        .sub-navbar {
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+      }
+    </style>
+    <script>
+      // Simple script to highlight the active link based on the current URL
+      document.addEventListener('DOMContentLoaded', function() {
+        var currentLocation = window.location.pathname;
+        var links = document.querySelectorAll('.sub-nav-link');
+        
+        links.forEach(function(link) {
+          if (currentLocation === link.getAttribute('href')) {
+            link.classList.add('active');
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div th:fragment="taskNav">
+      <nav class="sub-navbar">
+        <a href="/admin/tasks" class="sub-nav-link">All Tasks</a>
+        <a href="/admin/tasks/add" class="sub-nav-link">Add Task</a>
+        <a href="/admin/tasks/assigned" class="sub-nav-link">Assigned Tasks</a>
+      </nav>
+    </div>
+  </body>
+</html>

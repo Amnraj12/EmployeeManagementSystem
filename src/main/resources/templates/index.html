@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      /* Hero section styles */
+      .hero {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 0 0 10px 10px;
+        margin-bottom: 2rem;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        opacity: 0.9;
+      }
+      
+      /* CTA buttons */
+      .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+      
+      .cta-button {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      
+      .primary-cta {
+        background-color: #27ae60;
+        color: white;
+        border: 2px solid #27ae60;
+      }
+      
+      .secondary-cta {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+      
+      .primary-cta:hover {
+        background-color: #2ecc71;
+        border-color: #2ecc71;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      
+      .secondary-cta:hover {
+        background-color: rgba(255,255,255,0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      
+      /* Features section */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem 0;
+      }
+      
+      .feature-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-10px);
+      }
+      
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #3498db;
+      }
+      
+      .feature-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+      }
+      
+      /* Stats section */
+      .stats {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+        text-align: center;
+        margin: 3rem 0;
+        border-radius: 10px;
+      }
+      
+      .stats-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      
+      .stat-item {
+        padding: 1rem;
+      }
+      
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #3498db;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        color: #7f8c8d;
+      }
+      
+      /* Testimonial section */
+      .testimonial {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+      
+      .testimonial-text {
+        font-style: italic;
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+      }
+      
+      .testimonial-author {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .hero {
+          padding: 3rem 1rem;
+        }
+        
+        .hero h1 {
+          font-size: 2rem;
+        }
+        
+        .cta-buttons {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .stats-container {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div style="font-weight: bold; font-size: 1.2rem; color: white;">EMS</div>
+        <div style="display: flex; gap: 1rem;">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/login" class="nav-link">Login</a>
+          <a href="/register" class="nav-link">Register</a>
+        </div>
+      </nav>
+    </header>
+    
+    <section class="hero">
+      <h1>Employee Management System</h1>
+      <p>Streamline your workflow, manage tasks efficiently, and boost productivity with our comprehensive employee management platform.</p>
+      <div class="cta-buttons">
+        <a href="/register" class="cta-button primary-cta">Get Started</a>
+        <a href="/login" class="cta-button secondary-cta">Login</a>
+      </div>
+    </section>
+    
+    <main>
+      <!-- Features Section -->
+      <section>
+        <h2 style="text-align: center; margin-bottom: 2rem;">Key Features</h2>
+        <div class="features">
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Task Management</h3>
+            <p>Easily manage, assign and track progress on tasks. Prioritize work and ensure timely completion.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Performance Tracking</h3>
+            <p>Monitor employee performance with points-based system. Recognize and reward top performers.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>Leave Management</h3>
+            <p>Streamlined approval process for leave requests. Keep track of team availability at all times.</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Stats Section -->
+      <section class="stats">
+        <h2 style="margin-bottom: 2rem;">Trusted by Organizations</h2>
+        <div class="stats-container">
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Organizations</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Active Users</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Satisfaction Rate</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-number">30%</div>
+            <div class="stat-label">Productivity Increase</div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Testimonial -->
+      <section class="testimonial">
+        <h2 style="margin-bottom: 1.5rem;">What Our Users Say</h2>
+        <div class="testimonial-text">
+          "The Employee Management System has transformed how we track tasks and manage our team. The performance dashboard gives great insights into productivity, and the leave management feature has reduced our administrative work by 40%."
+        </div>
+        <div class="testimonial-author">- Sarah Johnson, HR Director</div>
+      </section>
+      
+      <!-- Final CTA -->
+      <section style="text-align: center; margin-bottom: 3rem;">
+        <h2>Ready to streamline your workforce management?</h2>
+        <p style="margin-bottom: 2rem;">Join thousands of satisfied organizations and employees today.</p>
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+          <a href="/register" style="background-color: #2c3e50; color: white; padding: 0.8rem 2rem; border-radius: 4px; text-decoration: none; font-weight: bold;">Create Account</a>
+          <a href="/login" style="border: 1px solid #2c3e50; color: #2c3e50; padding: 0.8rem 2rem; border-radius: 4px; text-decoration: none; font-weight: bold;">Sign In</a>
+        </div>
+      </section>
+    </main>
+    
+    <footer style="text-align: center; padding: 2rem; background-color: #2c3e50; color: white; margin-top: 2rem;">
+      <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem;">
+        <a href="#" style="color: white; text-decoration: none;">About Us</a>
+        <a href="#" style="color: white; text-decoration: none;">Contact</a>
+        <a href="#" style="color: white; text-decoration: none;">Privacy Policy</a>
+        <a href="#" style="color: white; text-decoration: none;">Terms of Service</a>
+      </div>
+      <p>&copy; 2025 Your Company Name. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+      <meta http-equiv="Pragma" content="no-cache" />
+      <meta http-equiv="Expires" content="0" />
+      <title>Admin Panel</title>
+      <link rel="stylesheet" href="/css/styles.css">
+      <script>
+          // Force reload when using the back button from cache
+          window.onpageshow = function(event) {
+              if (event.persisted) {
+                  window.location.reload();
+              }
+          };
+      </script>
+      <style>
+        /* Improved navbar styling */
+        .navbar {
+          background: linear-gradient(to right, #2c3e50, #4ca1af);
+          padding: 0.7rem 1rem;
+          display: flex;
+          flex-wrap: nowrap;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          overflow-x: auto; /* Allow horizontal scrolling if needed */
+        }
+        
+        .nav-link {
+          color: white;
+          text-decoration: none;
+          padding: 0.5rem 1rem;
+          margin-right: 0.5rem;
+          font-weight: 500;
+          border-radius: 4px;
+          transition: background-color 0.2s;
+          white-space: nowrap;
+        }
+        
+        .nav-link:hover {
+          background-color: rgba(255,255,255,0.1);
+        }
+        
+        /* Make logout stick to the right */
+        .nav-link:last-child {
+          margin-left: auto;
+          background-color: rgba(255,255,255,0.15);
+        }
+        
+        .nav-link:last-child:hover {
+          background-color: rgba(255,255,255,0.25);
+        }
+      </style>
+  </head>
+  <body>
+      <div th:fragment="adminNavbar">
+        <nav class="navbar">
+          <a href="/admin/dashboard" class="nav-link">Dashboard</a>
+          <a href="/admin/employees" class="nav-link">Manage Employees</a>
+          <!-- New button for employee approvals -->
+          <a href="/admin/employees/pending" class="nav-link">Employee Approvals</a>
+          <a href="/admin/tasks" class="nav-link">Manage Tasks</a>
+          <a href="/admin/leaves" class="nav-link">Leave Requests</a>
+          <a href="/logout" class="nav-link">Logout</a>
+        </nav>
+      </div>
+  </body>
+</html>

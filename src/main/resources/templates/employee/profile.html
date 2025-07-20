@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+      .profile-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      .profile-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      
+      .profile-photo {
+        flex: 1;
+        min-width: 300px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .profile-photo img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 5px solid #f4f4f4;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+      }
+      
+      .profile-photo .placeholder-img {
+        width: 200px;
+        height: 200px;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #6c757d;
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .employee-name {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+      
+      .file-upload-container {
+        width: 100%;
+        margin-top: 1rem;
+      }
+      
+      .file-upload-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+      
+      .file-upload-input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px dashed #3498db;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+        cursor: pointer;
+      }
+      
+      .profile-details {
+        flex: 2;
+        min-width: 300px;
+      }
+      
+      fieldset {
+        border: none;
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      
+      legend {
+        background-color: #3498db;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 1.2rem;
+        color: #2c3e50;
+      }
+      
+      input[type="text"],
+      input[type="email"],
+      select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        margin-top: 0.3rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      select:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      }
+      
+      input[readonly] {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        cursor: not-allowed;
+      }
+      
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .form-row label {
+        flex: 1;
+      }
+      
+      .update-button {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        margin-top: 1rem;
+        display: block;
+        width: 100%;
+      }
+      
+      .update-button:hover {
+        background-color: #34495e;
+        transform: translateY(-2px);
+      }
+      
+      @media (max-width: 768px) {
+        .profile-container {
+          flex-direction: column;
+        }
+        
+        .form-row {
+          flex-direction: column;
+          gap: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="fragments/employeeHeader :: employeeNavbar"></header>
+    <main>
+      <div class="profile-header">
+        <h2>My Profile</h2>
+        <p>Manage your personal information and settings</p>
+      </div>
+      
+      <form th:action="@{/employee/profile/update}" th:object="${employee}" method="post" enctype="multipart/form-data">
+        <div class="profile-container">
+          
+          <div class="profile-photo">
+            <div th:if="${employee.profilePicture != null}">
+              <img th:src="@{'/employee/profile/picture/' + ${employee.id}}" alt="Profile Picture"/>
+            </div>
+            <div th:if="${employee.profilePicture == null}" class="placeholder-img">
+              <span>👤</span>
+            </div>
+            
+            <h3 class="employee-name" th:text="${employee.name}">Employee Name</h3>
+            
+            <div class="file-upload-container">
+              <label class="file-upload-label">Upload New Photo:</label>
+              <input type="file" name="profilePicture" accept="image/*" class="file-upload-input"/>
+              <small style="display: block; margin-top: 0.5rem; color: #6c757d;">Recommended: Square image, 300x300 pixels or larger</small>
+            </div>
+          </div>
+          
+          
+          <div class="profile-details">
+            <fieldset>
+              <legend>Basic Information</legend>
+              <div class="form-row">
+                <label>Unique ID:
+                  <input type="text" th:field="*{id}" readonly/>
+                </label>
+                <label>Name:
+                  <input type="text" th:field="*{name}" readonly/>
+                </label>
+              </div>
+              <label>Email:
+                <input type="email" th:field="*{email}" readonly/>
+              </label>
+            </fieldset>
+            
+            <fieldset>
+              <legend>Contact Details</legend>
+              <label>Address:
+                <input type="text" th:field="*{address}" placeholder="Enter your address"/>
+              </label>
+              <div class="form-row">
+                <label>Primary Phone:
+                  <input type="text" th:field="*{phone}" placeholder="Enter phone number"/>
+                </label>
+                <label>Additional Phone:
+                  <input type="text" th:field="*{additionalPhone}" placeholder="Alternate phone number"/>
+                </label>
+              </div>
+              <label>Additional Email:
+                <input type="email" th:field="*{additionalEmail}" placeholder="Alternate email"/>
+              </label>
+            </fieldset>
+            
+            <fieldset>
+              <legend>Personal Details</legend>
+              <div class="form-row">
+                <label>Gender:
+                  <select th:field="*{gender}">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+                <label>Marital Status:
+                  <select th:field="*{maritalStatus}">
+                    <option value="">Select Status</option>
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorced">Divorced</option>
+                  </select>
+                </label>
+              </div>
+              <label>Blood Group:
+                <input type="text" th:field="*{bloodGroup}" placeholder="Enter blood group"/>
+              </label>
+            </fieldset>
+          </div>
+        </div>
+        
+        <button type="submit" class="update-button">Update Profile</button>
+      </form>
+    </main>
+    <footer>
+      <p>&copy; 2025 Your Company Name</p>
+    </footer>
+  </body>
+</html>
